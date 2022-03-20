@@ -1,6 +1,6 @@
 export const colors = {
     light: {
-        foreground: '#FF9B9B',
+        foreground: '#d17b7b',
         background: '#FFECEC',
     },
     dark: {

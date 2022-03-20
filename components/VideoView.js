@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Dimensions, StatusBar, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import { sizes } from "../assets/values/sizes";
 import { colors } from '../assets/values/colors.js';
 import { theme } from '../assets/values/theme.js';
-
-/* Device dimensions, use to optimize for device of all sizes */
-const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+import PasteLinkButton from "./PasteLinkButton";
+import SavePathButton from "./SavePathButton";
 
 const VideoView = (props) => {
     return (
         <View style={styles.componentWrapper}>
-            <Text>Video</Text>
+            <Text style={styles.heading}>Video</Text>
+            <SavePathButton text={'/Internal Storage/Videos/0/myVideos/'}></SavePathButton>
+            <PasteLinkButton text={'Paste Link'}></PasteLinkButton>
         </View>
     );
 }
@@ -20,8 +20,14 @@ const styles = StyleSheet.create({
     componentWrapper: {
         width: sizes.MusicView.width,
         backgroundColor: colors[theme].background,
-        height: sizes.VideoView.height,
+        height: sizes.MusicView.height,
+        padding: 20,
     },
+    heading: {
+        fontFamily: 'PS-bold',
+        fontSize: 55,
+        color: colors[theme].foreground,
+    }
 });
 
 
