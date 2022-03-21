@@ -10,6 +10,7 @@ import QualitySelector from "./QualitySelector";
 import DownloadButton from "./DownloadButton.js";
 import * as Clipboard from 'expo-clipboard';
 import ClearButton from "./ClearButton";
+import StarsImageSVG from "./StarsImageSVG";
 
 const MusicView = (props) => {
     const [qualityHigh, setQualityHigh] = useState(true);
@@ -26,6 +27,10 @@ const MusicView = (props) => {
     const fetchCopiedText = async () => {
         try {
             const text = await Clipboard.getStringAsync();
+            // if "music" isnt in link, its not a music link, so dont proceed
+            if (text && !text.includes('music')) {
+                ToastAndroid.show('This video content. Only audio will be downloaded. Ideal for podcasts.', ToastAndroid.LONG);
+            }
             setMediaURL(text);
             return text;
         } catch (error) {
@@ -85,7 +90,7 @@ const MusicView = (props) => {
     }
 
     return (
-        <ScrollView style={[styles.componentWrapper, {display: props.show ? 'flex' : 'none'}]}>
+        <ScrollView style={[styles.componentWrapper, { display: props.show ? 'flex' : 'none' }]}>
             <Text style={styles.heading}>Music</Text>
             <SavePathButton text={'/Internal Storage/Music/0/mymusic/'}></SavePathButton>
             <ClearButton text={'Clear'} task={resetState}></ClearButton>
@@ -103,7 +108,12 @@ const MusicView = (props) => {
                     <Text style={[styles.heading, { fontSize: 30, marginBottom: 5, }]}>Quality</Text>
                     <QualitySelector qualityHigh={qualityHigh} setQualityHigh={setQualityHigh}></QualitySelector>
                     <DownloadButton task={downloadFunc}></DownloadButton>
-                </View> : null
+                </View> :
+                <View>
+                    <StarsImageSVG style={{ width: 200, height: 200 }}></StarsImageSVG>
+                    <Text style={styles.errorToast}>Click Paste Link and if every atom in the universe is correctly aligned, something magical might happen</Text>
+                </View>
+
             }
         </ScrollView>
     );
