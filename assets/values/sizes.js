@@ -20,5 +20,9 @@ export const sizes = {
     MediaItem: {
         height: 120,
         width: width - 40,
+    },
+    QualitySelector: {
+        height: 40,
+        width: width - 40,
     }
 }

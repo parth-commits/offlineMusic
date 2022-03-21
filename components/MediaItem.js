@@ -7,21 +7,29 @@ import { theme } from '../assets/values/theme.js';
 const MediaItem = (props) => {
     return (
         <View style={styles.componentWrapper}>
-            <Image style={styles.MediaItemImage} source={{uri:`https://i.ytimg.com/vi/C8x9yBcxOJ8/hqdefault.jpg`}}></Image>
+            <Image style={styles.MediaItemImage} source={{uri: props.thumbnail}}></Image>
             <View style={styles.MediaImageTextWrapper}>
                 <TextInput
-                    adjustsFontSizeToFit
                     style={styles.MediaItemTitle}
                     placeholderTextColor={colors[theme].foreground}
-                    value="Tere Te"
+                    value={props.mediaTitle}
+                    onChangeText={
+                        text => {
+                            props.setMediaTitle(text)
+                        }
+                    }
                     placeholder="A great title!">
                 </TextInput>
                 <TextInput
-                    adjustsFontSizeToFit
                     style={styles.MediaItemAuthor}
                     placeholderTextColor={colors[theme].foreground}
-                    value="Guru Randhawa"
-                    placeholder="Author">
+                    value={props.author}
+                    onChangeText={
+                        text => {
+                            props.setAuthor(text)
+                        }
+                    }
+                    placeholder="You">
                 </TextInput>
             </View>
         </View>
@@ -34,6 +42,7 @@ const styles = StyleSheet.create({
         height: sizes.MediaItem.height,
         flexDirection: 'row',
         marginTop: 10,
+        marginBottom: 20,
     },
     MediaItemImage: {
         width: sizes.MediaItem.height,

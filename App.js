@@ -36,8 +36,8 @@ export default function App() {
 	} else {
 		return (
 			<SafeAreaView style={styles.container}>
-				{MusicPage && <MusicView></MusicView>}
-				{!MusicPage && <VideoView></VideoView> }
+				<MusicView show={MusicPage}></MusicView>
+				<VideoView show={!MusicPage}></VideoView>
 				<NavBarView MusicPage={MusicPage} setMusicPage={setMusicPage}></NavBarView>
 			</SafeAreaView>
 		);
