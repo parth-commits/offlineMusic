@@ -3,6 +3,7 @@ import { StyleSheet, View, Dimensions, TouchableOpacity, Text } from 'react-nati
 import { sizes } from "../assets/values/sizes";
 import { colors } from '../assets/values/colors.js';
 import { theme } from '../assets/values/theme.js';
+import * as Haptics from 'expo-haptics';
 
 /* Device dimensions, use to optimize for device of all sizes */
 const width = Dimensions.get('window').width;
@@ -11,6 +12,7 @@ const height = Dimensions.get('window').height;
 const NavBarView = (props) => {
     const onPress = (type) => {
         props.setMusicPage(type === "music" ? true : false)
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
     return (
         <View style={styles.componentWrapper}>

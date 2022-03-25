@@ -11,6 +11,7 @@ import MediaItem from "./MediaItem";
 import * as Clipboard from 'expo-clipboard';
 import ClearButton from "./ClearButton";
 import StarsImageSVG from "./StarsImageSVG";
+import * as Haptics from 'expo-haptics';
 
 const VideoView = (props) => {
     const [qualityHigh, setQualityHigh] = useState(true);
@@ -23,13 +24,14 @@ const VideoView = (props) => {
 
     const pasteLink = () => {
         fetchCopiedText().then((text) => fetchMediaDetails(text))
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
 
     const fetchCopiedText = async () => {
         try {
             const text = await Clipboard.getStringAsync();
             if (text.includes('music')) {
-                ToastAndroid.show('This music content. No video will be downloaded.', ToastAndroid.LONG);
+                ToastAndroid.show('This is music content. No video will be downloaded.', ToastAndroid.SHORT);
             }
             setMediaURL(text);
             return text;
@@ -37,8 +39,9 @@ const VideoView = (props) => {
             // if cant get from clipboard, it must be issue where user selected text then copied.
             // see : https://github.com/expo/expo/issues/15046
             console.log(error)
-            ToastAndroid.show('Please copy URL directly from Youtube', ToastAndroid.LONG);
+            ToastAndroid.show('Please copy URL directly from Youtube', ToastAndroid.SHORT);
             resetState();
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         }
     };
 
@@ -58,18 +61,20 @@ const VideoView = (props) => {
                         // if error, link must be wrong, so ask to try again
                         showToastShort();
                         resetState();
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
                     }
                 })
         } catch (error) {
             // if error, link must be wrong, so ask to try again
             showToastShort();
             resetState();
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         }
     };
 
     const showToastShort = () => {
         if (Platform.OS === 'android') {
-            ToastAndroid.show('Please enter valid URL and try again.', ToastAndroid.LONG);
+            ToastAndroid.show('Please enter valid URL and try again.', ToastAndroid.SHORT);
         } else {
             setShowInvalidLinkToast(true);
             setTimeout(() => {
@@ -78,12 +83,15 @@ const VideoView = (props) => {
         }
     }
 
-    const resetState = () => {
+    const resetState = (useHaptics) => {
         setMediaTitle('A great title');
         setAuthor('A great artist');
         setMediaURL('');
         setShowContent(false);
         setThumbnail('https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg');
+        if (useHaptics) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
     }
 
     const downloadFunc = () => {

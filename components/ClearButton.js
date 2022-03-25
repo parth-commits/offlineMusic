@@ -6,7 +6,7 @@ import { theme } from '../assets/values/theme.js';
 
 const ClearButton = (props) => {
     return (
-        <TouchableOpacity onPress={() => props.task()} activeOpacity={0.7} style={[styles.button, styles.savePathButton]}>
+        <TouchableOpacity onPress={() => props.task(true)} activeOpacity={0.7} style={[styles.button, styles.savePathButton]}>
             <Text style={[styles.buttonText, styles.savePathButtonText]} numberOfLines={1}>
                 {props.text}
             </Text>

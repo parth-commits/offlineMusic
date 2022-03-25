@@ -11,6 +11,8 @@ import DownloadButton from "./DownloadButton.js";
 import * as Clipboard from 'expo-clipboard';
 import ClearButton from "./ClearButton";
 import StarsImageSVG from "./StarsImageSVG";
+import * as DocumentPicker from 'expo-document-picker';
+import * as Haptics from 'expo-haptics';
 
 const MusicView = (props) => {
     const [qualityHigh, setQualityHigh] = useState(true);
@@ -23,20 +25,22 @@ const MusicView = (props) => {
 
     const pasteLink = () => {
         fetchCopiedText().then((text) => fetchMediaDetails(text))
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
     const fetchCopiedText = async () => {
         try {
             const text = await Clipboard.getStringAsync();
             // if "music" isnt in link, its not a music link, so dont proceed
             if (text && !text.includes('music')) {
-                ToastAndroid.show('This video content. Only audio will be downloaded. Ideal for podcasts.', ToastAndroid.LONG);
+                ToastAndroid.show('This is video content. Only audio will be downloaded. Ideal for podcasts.', ToastAndroid.SHORT);
             }
             setMediaURL(text);
             return text;
         } catch (error) {
             // if cant get from clipboard, it must be issue where user selected text then copied.
             // see : https://github.com/expo/expo/issues/15046
-            ToastAndroid.show('Please copy URL directly from Youtube Music', ToastAndroid.LONG);
+            ToastAndroid.show('Please copy URL directly from Youtube Music', ToastAndroid.SHORT);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
             resetState();
         }
     };
@@ -57,18 +61,20 @@ const MusicView = (props) => {
                         // if error, link must be wrong, so ask to try again
                         showToastShort();
                         resetState();
+                        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
                     }
                 })
         } catch (error) {
             // if error, link must be wrong, so ask to try again
             showToastShort();
             resetState();
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         }
     };
 
     const showToastShort = () => {
         if (Platform.OS === 'android') {
-            ToastAndroid.show('Please enter valid URL and try again.', ToastAndroid.LONG);
+            ToastAndroid.show('Please enter valid URL and try again.', ToastAndroid.SHORT);
         } else {
             setShowInvalidLinkToast(true);
             setTimeout(() => {
@@ -77,22 +83,38 @@ const MusicView = (props) => {
         }
     }
 
-    const resetState = () => {
+    const resetState = (useHaptics) => {
         setMediaTitle('A great title');
         setAuthor('A great artist');
         setMediaURL('');
         setShowContent(false);
         setThumbnail('https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg');
+        if (useHaptics) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
     }
 
     const downloadFunc = () => {
         console.log(mediaURL, author, mediaTitle, thumbnail);
     }
 
+    const newTask = () => {
+        
+        
+        DocumentPicker.getDocumentAsync({
+            type:'*/*',
+            copyToCacheDirectory: false,
+          }).then((result) => {
+            console.log(result)
+        }).catch((e) => {
+            console.log(e);
+        })
+    }
+
     return (
         <ScrollView style={[styles.componentWrapper, { display: props.show ? 'flex' : 'none' }]}>
             <Text style={styles.heading}>Music</Text>
-            <SavePathButton text={'/Internal Storage/Music/0/mymusic/'}></SavePathButton>
+            <SavePathButton task={newTask} text={'/Internal Storage/Music/0/mymusic/'}></SavePathButton>
             <ClearButton text={'Clear'} task={resetState}></ClearButton>
             <PasteLinkButton task={pasteLink} text={'Paste Link'}></PasteLinkButton>
             {showInvalidLinkToast ? <Text style={styles.errorToast}>Please enter valid URL and try again.</Text> : null}
